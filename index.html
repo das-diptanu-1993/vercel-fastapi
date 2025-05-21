@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Call Example</title>
+</head>
+<body>
+  <button onclick="callApi()">Call API</button>
+  <img id="output">
+
+  <script>
+    async function callApi() {
+        console.log("Calling API...");
+      const response = await fetch("https://vercel-fastapi-puce.vercel.app/api/get_image");
+      const data = await response.json();
+      document.getElementById("output").setAttribute("src", data.image);
+    }
+  </script>
+</body>
+</html>
