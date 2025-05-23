@@ -1,0 +1,50 @@
+<!-- Example HTML for uploading a CSV file to your server -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload CSV File</title>
+</head>
+<body>
+  <h2>csv2gantt</h2>
+  <form id="uploadForm">
+    <input type="file" id="csvFile" accept=".csv" required>
+    <button type="submit">upload</button>
+  </form>
+  <pre id="output"></pre>
+  <button id="downloadBtn" style="display:none;">download csv</button>
+  <button id="ganttBtn" style="display:none;">download gantt</button>
+
+  <script>
+    // const env = "https://vercel-fastapi-puce.vercel.app";
+    const env = "http://127.0.0.1:8000";
+    var file_name = "";
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('csvFile');
+        if (!fileInput.files.length) return;
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        console.log(fileInput.files[0].name);
+        file_name = fileInput.files[0].name;
+        const response = await fetch(env + '/api/upload_csv', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById('output').textContent = result.message || 'File uploaded successfully!';
+
+        document.getElementById('downloadBtn').style.display = 'block';
+        document.getElementById('ganttBtn').style.display = 'block';
+        document.getElementById('uploadForm').style.display = 'none';
+    });
+    document.getElementById('downloadBtn').onclick = function() {
+        window.open(env + '/api/download_csv?file_name=' + file_name, '_blank');
+    };
+    document.getElementById('ganttBtn').onclick = function() {
+        window.open(env + '/api/create_gantt?file_name=' + file_name, '_blank');
+    };
+  </script>
+</body>
+</html>
